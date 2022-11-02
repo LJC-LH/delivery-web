@@ -11,7 +11,7 @@
   >
     <el-menu-item
       :index="'/index/' + item.menuClick"
-      v-for="(item, i) in menu"
+      v-for="(item, i) in authMenu"
       :key="i"
     >
       <i :class="item.menuIcon"></i>
@@ -25,34 +25,56 @@ export default {
   name: "Aside",
   data() {
     return {
+      user: JSON.parse(sessionStorage.getItem("info")),
       menu: [
         {
           menuClick: "home",
           menuName: "首页",
           menuIcon: "el-icon-star-off",
+          auth: [0, 1, 2, 3],
         },
-        // {
-        //   menuClick: "admin",
-        //   menuName: "管理员管理",
-        //   menuIcon: "el-icon-s-custom",
-        // },
         {
           menuClick: "user",
           menuName: "用户管理",
           menuIcon: "el-icon-user-solid",
+          auth: [0],
+        },
+        {
+          menuClick: "postman",
+          menuName: "快递员管理",
+          menuIcon: "el-icon-s-custom",
+          auth: [0, 1],
         },
         {
           menuClick: "outlet",
           menuName: "网点管理",
           menuIcon: "el-icon-menu",
+          auth: [0],
         },
         {
           menuClick: "express",
           menuName: "快递管理",
           menuIcon: "el-icon-s-management",
+          auth: [0, 1, 2, 3],
         },
+        {
+          menuClick: "send",
+          menuName: "用户下单",
+          menuIcon: "el-icon-s-management",
+          auth: [3],
+        }
       ],
     };
+  },
+  computed: {
+    authMenu() {
+      return this.menu.filter((item) => {
+        return item.auth.indexOf(this.user.roleId) >= 0
+      });
+    },
+  },
+  methods: {
+
   },
   props: {
     isCollapse: Boolean,

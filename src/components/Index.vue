@@ -46,7 +46,7 @@
             }
         },
         mounted(){
-            this.$router.push('/index/home')
+            this.$router.replace('/index/home')
         }
     }
 </script>

@@ -3,31 +3,31 @@ import VueRouter from 'vue-router';
 
 const routes = [
     {
-        path:'/',
-        name:'login',
-        component:()=>import('../components/Login')
+        path: '/',
+        name: 'login',
+        component: () => import('../components/Login')
     },
     {
-        path:'/register',
-        name:'register',
-        component:()=>import('../components/Register')
+        path: '/register',
+        name: 'register',
+        component: () => import('../components/Register')
     },
     {
-        path:'/index',
-        name:'index',
-        meta:{
-            isAnth:true
+        path: '/index',
+        name: 'index',
+        meta: {
+            isAnth: true
         },
-        component:()=>import('../components/Index'),
-        children:[
+        component: () => import('../components/Index'),
+        children: [
             {
-                path:'home',
-                name:'home',
-                meta:{
-                    title:'首页',
-                    isAnth:true
+                path: 'home',
+                name: 'home',
+                meta: {
+                    title: '首页',
+                    isAnth: true
                 },
-                component:()=>import('../components/Home')
+                component: () => import('../components/Home')
             },
             // {
             //     path:'admin',
@@ -39,60 +39,93 @@ const routes = [
             //     component:()=>import('../components/admin/AdminManage.vue')
             // },
             {
-                path:'user',
-                name:'user',
-                meta:{
-                    title:'用户管理',
-                    isAnth:true
+                path: 'user',
+                name: 'user',
+                meta: {
+                    title: '用户管理',
+                    isAnth: true
                 },
-                component:()=>import('../components/user/UserManage.vue')
+                component: () => import('../components/user/UserManage.vue')
             },
             {
-                path:'express',
-                name:'express',
-                meta:{
-                    title:'快递管理',
-                    isAnth:true
+                path: 'express',
+                name: 'express',
+                meta: {
+                    title: '快递管理',
+                    isAnth: true
                 },
-                component:()=>import('../components/express/ExpressManage.vue')
+                component: () => import('../components/express/ExpressManage.vue')
             },
             {
-                path:'outlet',
-                name:'outlet',
-                meta:{
-                    title:'商品类型管理',
-                    isAnth:true
+                path: 'outlet',
+                name: 'outlet',
+                meta: {
+                    title: '商品类型管理',
+                    isAnth: true
                 },
-                component:()=>import('../components/outlet/OutletManage.vue')
+                component: () => import('../components/outlet/OutletManage.vue')
             },
             {
-                path:'postman',
-                name:'postman',
-                meta:{
-                    title:'快递员管理',
-                    isAnth:true
+                path: 'postman',
+                name: 'postman',
+                meta: {
+                    title: '快递员管理',
+                    isAnth: true
                 },
-                component:()=>import('../components/postman/PostmanManage.vue')
+                component: () => import('../components/postman/PostmanManage.vue')
+            },
+            {
+                path: 'send',
+                name: 'send',
+                meta: {
+                    title: '用户下单',
+                    isAnth: true
+                },
+                component: () => import('../components/send/Send.vue')
             }
         ]
     }
 ]
 
- const router = new VueRouter({
+const router = new VueRouter({
     routes
 })
 
-router.beforeEach((to,from,next)=>{
+
+
+//解决vue路由重复导航错误
+// 获取原型对象push函数
+const originalPush = VueRouter.prototype.push
+// 获取原型对象replace函数
+const originalReplace = VueRouter.prototype.replace
+
+// 修改原型对象中的push函数
+VueRouter.prototype.push = function push(location) {
+    return originalPush.call(this, location).catch(err => err)
+}
+// 修改原型对象中的replace函数
+VueRouter.prototype.replace = function replace(location) {
+    return originalReplace.call(this, location).catch(err => err)
+}
+
+
+
+router.beforeEach((to, from, next) => {
     //console.log(to,from,next)
-    if(to.meta.isAnth){
-        if(sessionStorage.key(0) && JSON.parse(sessionStorage.getItem('info')).userName==='admin'){
+    if (to.meta.isAnth) {
+        if (sessionStorage.key(0)) {
             next()
-        }else{
+        } else {
             alert('没有权限访问')
         }
-    }else{
+    } else {
         next()
     }
 })
+
+
+
+
+
 
 export default router

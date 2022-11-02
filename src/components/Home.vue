@@ -41,7 +41,7 @@
           角色
         </template>
         <el-tag type="success" disable-transitions>{{
-          user.roleId == 0 ? "超级管理员" : user.roleId == 1 ? "网点管理员" : "用户"
+          user.roleId == 0 ? "超级管理员" : user.roleId == 1 ? "网点管理员" : user.roleId == 2 ? "快递员" : "用户"
         }}</el-tag>
       </el-descriptions-item>
     </el-descriptions>

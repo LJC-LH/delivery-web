@@ -47,18 +47,18 @@
         },
         methods:{
             async confirm(){
-                /*let result = await this.$API.loginAPI.login(this.loginForm)
+                let result = await this.$API.loginAPI.login(this.loginForm)
                 console.log(result)
-                if(result.code == '200'){
-                    sessionStorage.setItem('info',JSON.stringify(result.data))
-                    this.$router.replace('/index');
+                if(result.data.code == '200'){
+                    sessionStorage.setItem('info',JSON.stringify(result.data.data))
+                    this.$router.push('/index');
                 }else{
                     this.$message({
                         type:'warning',
                         message:'账号或密码错误，请重试！'
                     })
-                }*/
-                let jsonobj = {
+                }
+                /*let jsonobj = {
                     userName: this.loginForm.userName,
                     password: this.loginForm.password,
                     realName: '刘建成',
@@ -67,15 +67,15 @@
                     roleId:0
                 }
                 sessionStorage.setItem('info',JSON.stringify(jsonobj))
-                this.$router.replace('/index');
+                this.$router.replace('/index');*/
             },
             async reset(){
                 this.loginForm={
                     userName:'',
                     password:''
                 }
-                let result = await this.$API.loginAPI.test()
-                console.log(result)
+                // let result = await this.$API.loginAPI.test()
+                // console.log(result)
             },
             toRegister(){
                 this.$router.push('/register')

@@ -7,7 +7,7 @@
             <span>快递配送系统</span>
         </div>
         <el-dropdown>
-            <span>{{user}}<i class="el-icon-arrow-down" style="margin-left: 5px;"></i></span>
+            <span>{{user.realName}}<i class="el-icon-arrow-down" style="margin-left: 5px;"></i></span>
             <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="toUser">个人中心</el-dropdown-item>
                 <el-dropdown-item @click.native="logout">退出登录</el-dropdown-item>
@@ -22,7 +22,7 @@
         name: "Header",
         data(){
             return {
-                user : 'admin'
+                user : JSON.parse(sessionStorage.getItem('info'))
             }
         },
         props:{
@@ -32,7 +32,7 @@
             toUser(){
                 console.log('to_user')
 
-                this.$router.push("/home")
+                this.$router.push("/index/home")
             },
             logout(){
                 console.log('logout')
