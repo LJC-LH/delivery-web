@@ -9,7 +9,7 @@
           :rules="rules"
           ref="loginForm"
         >
-          <el-form-item label="账号" prop="no">
+          <el-form-item label="账号" prop="account">
             <el-input
               style="width: 200px"
               type="text"
@@ -26,13 +26,28 @@
               show-password
               autocomplete="off"
               size="small"
-              @keyup.enter.native="confirm"
+              @keyup.enter.native="confirm('loginForm')"
             ></el-input>
+          </el-form-item>
+          <el-form-item label="身份">
+            <el-select
+              v-model="loginForm.roleId"
+              placeholder="请选择身份"
+              style="width: 200px"
+            >
+              <el-option
+                v-for="item in roles"
+                :key="item.roleId"
+                :label="item.roleName"
+                :value="item.roleId"
+              >
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item style="display: flex">
             <el-button
               type="primary"
-              @click="confirm"
+              @click="confirm('loginForm')"
               :disabled="confirm_disabled"
               >登 录</el-button
             >
@@ -41,9 +56,11 @@
             >
           </el-form-item>
         </el-form>
-        <p class="register" @click="toRegister">
-          用户注册&nbsp;<i class="el-icon-position"></i>
-        </p>
+        <div class="register">
+          <span @click="toRegister">
+            用户注册&nbsp;<i class="el-icon-position"></i>
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -57,41 +74,68 @@ export default {
     return {
       confirm_disabled: false,
       loginForm: {
-        account: "A2022001",
+        account: "#A2022001",
         password: "123456",
+        roleId: 0,
       },
+      roles: [
+        {
+          roleId: 0,
+          roleName: "超级管理员",
+        },
+        {
+          roleId: 1,
+          roleName: "网点",
+        },
+        {
+          roleId: 2,
+          roleName: "快递员",
+        },
+        {
+          roleId: 3,
+          roleName: "用户",
+        },
+      ],
       rules: {
         account: [{ required: true, message: "请输入账号", trigger: "blur" }],
-        password: [{ required: true, message: "请输密码", trigger: "blur" }],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
       },
     };
   },
   methods: {
-    async confirm() {
-      // let result = await this.$API.loginAPI.login(this.loginForm)
-      // console.log(result)
-      // if(result.data.code == '200'){
-      //     sessionStorage.setItem('info',JSON.stringify(result.data.data))
-      //     this.$router.push('/index');
-      // }else{
-      //     this.$message({
-      //         type:'warning',
-      //         message:'账号或密码错误，请重试！'
-      //     })
-      // }
+    async confirm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // let result = await this.$API.loginAPI.login(this.loginForm)
+          // console.log(result)
+          // if(result.data.code == '200'){
+          //     sessionStorage.setItem('info',JSON.stringify(result.data.data))
+          //     this.$router.push('/index');
+          // }else{
+          //     this.$message({
+          //         type:'warning',
+          //         message:'账号或密码错误，请重试！'
+          //     })
+          // }
 
-      let jsonobj = {
-        roleId: 1,
-        object: {
-          account: this.loginForm.account,
-          password: this.loginForm.password,
-          realName: "刘建成",
-          sex: 1,
-          phone: "1234567890",
-        },
-      };
-      sessionStorage.setItem("info", JSON.stringify(jsonobj));
-      this.$router.push("/index");
+          let jsonobj = {
+            roleId: this.loginForm.roleId,
+            object: {
+              account: this.loginForm.account,
+              password: this.loginForm.password,
+              realName: "刘建成",
+              sex: 1,
+              phone: "1234567890",
+            },
+          };
+          sessionStorage.setItem("info", JSON.stringify(jsonobj));
+          this.$router.push("/index");
+
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
     async reset() {
       this.loginForm = {
@@ -122,7 +166,7 @@ export default {
   margin-top: -200px;
   margin-left: -250px;
   width: 450px;
-  height: 330px;
+  height: 380px;
   background: #fff;
   border-radius: 5%;
 }
