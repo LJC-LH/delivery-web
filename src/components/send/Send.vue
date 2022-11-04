@@ -74,7 +74,7 @@
       </el-form-item>
       <el-row :gutter="10">
         <el-col :span="6">
-          <el-form-item label="快递网点：" size="middle">
+          <el-form-item label="快递网点：" size="middle" prop="stationSendId">
             <el-select v-model="sendForm.stationSendId" placeholder="寄件网点">
               <el-option
                 v-for="(item, index) in stationList"
@@ -86,7 +86,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item label="物品类型：" size="middle">
+          <el-form-item label="物品类型：" size="middle" prop="type">
             <el-select v-model="sendForm.type" placeholder="物品类型">
               <el-option
                 v-for="(item, index) in typeList"
@@ -97,7 +97,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="物品重量：" size="middle">
+      <el-form-item label="物品重量：" size="middle" prop="weight">
         <el-input-number
           v-model.number="sendForm.weight"
           :precision="1"
@@ -107,7 +107,7 @@
         ></el-input-number>
         <span>&nbsp;&nbsp;单位：（KG）</span>
       </el-form-item>
-      <el-form-item label="备注：">
+      <el-form-item label="备注：" prop="remark">
         <el-row :gutter="10">
           <el-col :span="10">
             <el-input
@@ -123,10 +123,12 @@
           >预估金额<b style="color: red">{{ sendForm.price }}</b
           >元&nbsp;&nbsp;</span
         >
-        <el-button type="primary" @click="onSubmit" size="middle"
+        <el-button type="primary" @click="onSubmit('sendForm')" size="middle"
           >立即下单</el-button
         >
-        <el-button size="middle" @click="reset">重置</el-button>
+        <el-button type="info" size="middle" @click="reset('sendForm')"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
   </div>
@@ -188,7 +190,8 @@ export default {
     };
   },
   methods: {
-    onSubmit() {
+    onSubmit(sendForm) {
+      console.log(sendForm)
       this.$confirm("信息全部填写完成了嘛^-^?", "提示", {
         confirmButtonText: "确定", //确认按钮的文字显示
         type: "warning",
@@ -201,8 +204,8 @@ export default {
             this.$message({
               type: "success",
               message: "下单成功，请耐心等待您的包裹送达",
-            })
-            this.$router.push("/index/express")
+            });
+            this.$router.push("/index/express");
           }
         })
         .catch(() => {
@@ -240,28 +243,29 @@ export default {
       this.sendForm.price =
         this.sendForm.weight <= 3 ? 12 : (this.sendForm.weight - 3) * 2 + 12;
     },
-    reset() {
-      this.sendForm = {
-        nameSend: "",
-        phoneSend: "",
-        provinceSend: "",
-        citySend: "",
-        countySend: "",
-        detailSend: "",
-        nameReceive: "",
-        phoneReceive: "",
-        provinceReceive: "",
-        cityReceive: "",
-        countyReceive: "",
-        detailReceive: "",
-        stationSendId: "",
-        stationReceiveId: "",
-        type: "",
-        weight: 1.0,
-        price: 12,
-        remark: "",
-        state: 0,
-      };
+    reset(formName) {
+      this.$refs[formName].resetFields();
+      // this.sendForm = {
+      //   nameSend: "",
+      //   phoneSend: "",
+      //   provinceSend: "",
+      //   citySend: "",
+      //   countySend: "",
+      //   detailSend: "",
+      //   nameReceive: "",
+      //   phoneReceive: "",
+      //   provinceReceive: "",
+      //   cityReceive: "",
+      //   countyReceive: "",
+      //   detailReceive: "",
+      //   stationSendId: "",
+      //   stationReceiveId: "",
+      //   type: "",
+      //   weight: 1.0,
+      //   price: 12,
+      //   remark: "",
+      //   state: 0,
+      // };
     },
   },
 };
