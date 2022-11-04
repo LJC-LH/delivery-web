@@ -57,7 +57,7 @@ export default {
     return {
       confirm_disabled: false,
       loginForm: {
-        account: "A2022001",
+        account: "#A2022002",
         password: "123456",
       },
       rules: {
