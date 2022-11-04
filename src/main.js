@@ -7,6 +7,7 @@ import './assets/global.css';
 import VueRouter from 'vue-router';
 import router from './router';
 import API from '@/api';
+import VDistpicker from 'v-distpicker'
 // Vue.prototype.$axios=axios;
 // Vue.prototype.$httpUrl='http://localhost:8080'
 Vue.config.productionTip = false
@@ -14,6 +15,7 @@ Vue.config.productionTip = false
 Vue.use(VueRouter);
 Vue.prototype.$API =API;
 Vue.use(ElementUI,{size:'small'});
+Vue.component('v-distpicker', VDistpicker);
 new Vue({
   router,
   render: h => h(App),

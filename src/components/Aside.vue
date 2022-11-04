@@ -46,7 +46,7 @@ export default {
           auth: [0, 1],
         },
         {
-          menuClick: "outlet",
+          menuClick: "station",
           menuName: "网点管理",
           menuIcon: "el-icon-menu",
           auth: [0],

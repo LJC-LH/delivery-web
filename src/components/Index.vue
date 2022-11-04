@@ -5,11 +5,11 @@
         </el-aside>
 
         <el-container style="height: 100%;">
-            <el-header style="text-align: right; font-size: 12px;height: 100%;border-bottom: rgba(168,168,168,0.3) 1px solid;">
+            <el-header style="text-align: right; font-size: 12px;height: 100%;border-bottom: rgba(168,168,168,0.3) 1px solid;background-color: rgb(238, 241, 246);">
                 <Header @doCollapse="doCollapse" :icon="icon"></Header>
             </el-header>
 
-            <el-main style="height: 100%;">
+            <el-main style="height: 100%;" >
                <!-- <Main></Main>-->
                 <router-view/>
             </el-main>
@@ -55,6 +55,9 @@
     
     .el-main{
         padding: 5px;
+    }
+    .el-aside {
+        color: #333;
     }
     .el-aside {
         color: #333;

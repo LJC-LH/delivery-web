@@ -9,8 +9,8 @@
         label-width="100px"
         class="demo-ruleForm"
       >
-        <el-form-item label="用户名" prop="userName">
-          <el-input v-model="registerForm.userName"></el-input>
+        <el-form-item label="用户名" prop="account">
+          <el-input v-model="registerForm.account"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input show-password v-model="registerForm.password"></el-input>
@@ -34,10 +34,11 @@
           <el-button @click="resetForm('registerForm')">重置</el-button>
         </el-form-item>
       </el-form>
-
-      <p class="login" @click="toLogin">
+      <div class="login">
+        <span @click="toLogin">
         <i class="el-icon-refresh-right"></i>&nbsp;返回登录
-      </p>
+      </span>
+      </div>
     </div>
   </div>
 </template>
@@ -47,7 +48,7 @@ export default {
   data() {
     return {
       registerForm: {
-        userName: "",
+        account: "",
         password: "",
         realName: "",
         phone: "",
@@ -55,7 +56,7 @@ export default {
         roleId:2  //写死，注册只能是普通用户
       },
       rules: {
-        userName: [
+        account: [
           { required: true, message: "用户名不能为空", trigger: "blur" },
         ],
         password: [
@@ -70,9 +71,9 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
-        //   let result = this.$API.loginAPI.register(this.registerForm);
+        //   let result = this.$API.userAPI.register(this.registerForm);
         //   if (result.code == "200") {
-            if(this.registerForm.userName == "admin"){
+            if(this.registerForm.account == "admin"){
             console.log(this.registerForm)
             this.$message({
               type: "success",
@@ -113,12 +114,10 @@ export default {
 }
 .registerDiv {
   position: absolute;
-  /* top: 40%; */
-  /* left: 50%; */
-  margin-top: 100px;
-  margin-left: 550px;
-  width: 800px;
-  height: 600px;
+  margin-top: 1%;
+  margin-left: 20%;
+  width: 50%;
+  height: 80%;
   padding: 3%;
   background: #fff;
   border-radius: 2%;
@@ -135,6 +134,6 @@ export default {
   font-size: 20px;
 }
 .demo-ruleForm {
-  padding: 5% 10%;
+  padding: 5% 5%;
 }
 </style>

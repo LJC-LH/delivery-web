@@ -1,7 +1,7 @@
 <template>
     <div>
         <div style="margin-bottom: 5px;">
-            <el-input v-model="name" placeholder="请输入名字" suffix-icon="el-icon-search" style="width: 200px;"
+            <el-input v-model="realName" placeholder="请输入名字" suffix-icon="el-icon-search" style="width: 200px;"
                       @keyup.enter.native="loadPost"></el-input>
             <el-select v-model="sex" filterable placeholder="请选择性别" style="margin-left: 5px;">
                 <el-option
@@ -16,15 +16,17 @@
 
             <el-button type="primary" style="margin-left: 5px;" @click="add">新增</el-button>
         </div>
-        <el-table :data="tableData"
+
+
+        <el-table :data="userList"
                   :header-cell-style="{ background: '#f2f5fc', color: '#555555' }"
                   border
         >
-            <el-table-column prop="id" label="ID" width="60">
+            <el-table-column prop="UserId" label="ID" width="60">
             </el-table-column>
-            <el-table-column prop="no" label="账号" width="180">
+            <el-table-column prop="account" label="账号" width="180">
             </el-table-column>
-            <el-table-column prop="name" label="姓名" width="180">
+            <el-table-column prop="realName" label="姓名" width="180">
             </el-table-column>
             <el-table-column prop="age" label="年龄" width="80">
             </el-table-column>
@@ -35,14 +37,14 @@
                             disable-transitions>{{scope.row.sex === 1 ? '男' : '女'}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="roleId" label="角色" width="120">
+            <!-- <el-table-column prop="roleId" label="角色" width="120">
                 <template slot-scope="scope">
                     <el-tag
                             :type="scope.row.roleId === 0 ? 'danger' : (scope.row.roleId === 1 ? 'primary' : 'success')"
                             disable-transitions>{{scope.row.roleId === 0 ? '超级管理员' :
                         (scope.row.roleId === 1 ? '管理员' : '用户')}}</el-tag>
                 </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="phone" label="电话" width="180">
             </el-table-column>
             <el-table-column prop="operate" label="操作">
@@ -50,7 +52,7 @@
                     <el-button size="small" type="success" @click="mod(scope.row)">编辑</el-button>
                     <el-popconfirm
                             title="确定删除吗？"
-                            @confirm="del(scope.row.id)"
+                            @confirm="del(scope.row.UserId)"
                             style="margin-left: 5px;"
                     >
                         <el-button slot="reference" size="small" type="danger" >删除</el-button>
@@ -61,9 +63,9 @@
         <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
-                :current-page="pageNum"
+                :current-page="page"
                 :page-sizes="[5, 10, 20,30]"
-                :page-size="pageSize"
+                :page-size="recPerPage"
                 layout="total, sizes, prev, pager, next, jumper"
                 :total="total">
         </el-pagination>
@@ -75,14 +77,14 @@
                 center>
 
             <el-form ref="form" :rules="rules" :model="form" label-width="80px">
-                <el-form-item label="账号" prop="no">
+                <el-form-item label="账号" prop="account">
                     <el-col :span="20">
-                        <el-input v-model="form.no"></el-input>
+                        <el-input v-model="form.account"></el-input>
                     </el-col>
                 </el-form-item>
-                <el-form-item label="名字" prop="name">
+                <el-form-item label="名字" prop="realName">
                     <el-col :span="20">
-                        <el-input v-model="form.name"></el-input>
+                        <el-input v-model="form.realName"></el-input>
                     </el-col>
                 </el-form-item>
                 <el-form-item label="密码" prop="password">
@@ -127,10 +129,10 @@
                 }
             };
             let checkDuplicate =(rule,value,callback)=>{
-                if(this.form.id){
+                if(this.form.UserId){
                     return callback();
                 }
-                this.$axios.get(this.$httpUrl+"/user/findByNo?no="+this.form.no).then(res=>res.data).then(res=>{
+                this.$axios.get(this.$httpUrl+"/user/findByNo?account="+this.form.account).then(res=>res.data).then(res=>{
                     if(res.code!=200){
 
                         callback()
@@ -141,11 +143,43 @@
             };
 
             return {
-                tableData: [],
-                pageSize:10,
-                pageNum:1,
+                userList: [
+                    {
+                        UserId:1,
+                        account:'user1',
+                        realName:'刘德华',
+                        age:20,
+                        sex:1,
+                        phone:'17767639938'
+                    },
+                    {
+                        UserId:1,
+                        account:'user2',
+                        realName:'郭富城',
+                        age:20,
+                        sex:0,
+                        phone:'17767639938'
+                    },
+                    {
+                        UserId:1,
+                        account:'user3',
+                        realName:'黎明',
+                        age:20,
+                        sex:1,
+                        phone:'17767639938'
+                    },
+                    {
+                        UserId:1,
+                        account:'user4',
+                        realName:'张学友',
+                        age:22,
+                        sex:0,
+                        phone:'17767639938'
+                    }
+                ],
+                recPerPage:5,
+                page:1,
                 total:0,
-                name:'',
                 sex:'',
                 sexs:[
                     {
@@ -158,22 +192,21 @@
                 ],
                 centerDialogVisible:false,
                 form:{
-                    id:'',
-                    no:'',
-                    name:'',
+                    UserId:'',
+                    account:'',
+                    realName:'',
                     password:'',
                     age:'',
                     phone:'',
-                    sex:'0',
-                    roleId:'2'
+                    sex:'0'
                 },
                 rules: {
-                    no: [
+                    account: [
                         {required: true, message: '请输入账号', trigger: 'blur'},
                         {min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur'},
                         {validator:checkDuplicate,trigger: 'blur'}
                     ],
-                    name: [
+                    realName: [
                         {required: true, message: '请输入名字', trigger: 'blur'}
                     ],
                     password: [
@@ -197,10 +230,10 @@
             resetForm() {
                 this.$refs.form.resetFields();
             },
-            del(id){
-                console.log(id)
+            del(UserId){
+                console.log(UserId)
 
-                this.$axios.get(this.$httpUrl+'/user/del?id='+id).then(res=>res.data).then(res=>{
+                this.$axios.get(this.$httpUrl+'/user/del?UserId='+UserId).then(res=>res.data).then(res=>{
                     console.log(res)
                     if(res.code==200){
 
@@ -224,9 +257,9 @@
                 this.centerDialogVisible = true
                 this.$nextTick(()=>{
                     //赋值到表单
-                    this.form.id = row.id
-                    this.form.no = row.no
-                    this.form.name = row.name
+                    this.form.UserId = row.UserId
+                    this.form.account = row.account
+                    this.form.realName = row.realName
                     this.form.password = ''
                     this.form.age = row.age +''
                     this.form.sex = row.sex +''
@@ -235,7 +268,6 @@
                 })
             },
             add(){
-
                 this.centerDialogVisible = true
                 this.$nextTick(()=>{
                     this.resetForm()
@@ -287,7 +319,7 @@
             save(){
                 this.$refs.form.validate((valid) => {
                     if (valid) {
-                        if(this.form.id){
+                        if(this.form.UserId){
                             this.doMod();
                         }else{
                             this.doSave();
@@ -301,13 +333,13 @@
             },
             handleSizeChange(val) {
                 console.log(`每页 ${val} 条`);
-                this.pageNum=1
-                this.pageSize=val
+                this.page=1
+                this.recPerPage=val
                 this.loadPost()
             },
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
-                this.pageNum=val
+                this.page=val
                 this.loadPost()
             },
             loadGet(){
@@ -316,15 +348,15 @@
                 })
             },
             resetParam(){
-                this.name=''
+                this.realName=''
                 this.sex=''
             },
             loadPost(){
                 this.$axios.post(this.$httpUrl+'/user/listPageC1',{
-                    pageSize:this.pageSize,
-                    pageNum:this.pageNum,
+                    recPerPage:this.recPerPage,
+                    page:this.page,
                     param:{
-                        name:this.name,
+                        realName:this.realName,
                         sex:this.sex,
                         roleId:'2'
                     }
@@ -342,7 +374,7 @@
         },
         beforeMount() {
             //this.loadGet();
-            this.loadPost()
+            //this.loadPost()
         }
     }
 </script>

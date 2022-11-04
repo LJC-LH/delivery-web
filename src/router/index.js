@@ -57,13 +57,13 @@ const routes = [
                 component: () => import('../components/express/ExpressManage.vue')
             },
             {
-                path: 'outlet',
-                name: 'outlet',
+                path: 'station',
+                name: 'station',
                 meta: {
-                    title: '商品类型管理',
+                    title: '网点管理',
                     isAnth: true
                 },
-                component: () => import('../components/outlet/OutletManage.vue')
+                component: () => import('../components/station/StationManage.vue')
             },
             {
                 path: 'postman',

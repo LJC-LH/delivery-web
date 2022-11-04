@@ -1,5 +1,5 @@
 <template>
-  <h1>outletManage</h1>
+  <h1>StationManage</h1>
 </template>
 
 <script>
