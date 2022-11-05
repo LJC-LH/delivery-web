@@ -74,7 +74,7 @@ export default {
     return {
       confirm_disabled: false,
       loginForm: {
-        account: "#A2022002",
+        account: "A2022002",
         password: "123456",
         roleId: 0,
       },
@@ -85,7 +85,7 @@ export default {
         },
         {
           roleId: 1,
-          roleName: "网点",
+          roleName: "快递站点",
         },
         {
           roleId: 2,
@@ -104,32 +104,32 @@ export default {
   },
   methods: {
     async confirm(formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          // let result = await this.$API.loginAPI.login(this.loginForm)
-          // console.log(result)
-          // if(result.data.code == '200'){
-          //     sessionStorage.setItem('info',JSON.stringify(result.data.data))
-          //     this.$router.push('/index');
-          // }else{
-          //     this.$message({
-          //         type:'warning',
-          //         message:'账号或密码错误，请重试！'
-          //     })
-          // }
+          let result = await this.$API.loginAPI.login(this.loginForm)
+          console.log(result)
+          if(result.data.code == '200'){
+              sessionStorage.setItem('info',JSON.stringify(result.data.data))
+              this.$router.push('/index');
+          }else{
+              this.$message({
+                  type:'warning',
+                  message:'账号或密码错误，请重试！'
+              })
+          }
 
-          let jsonobj = {
-            roleId: this.loginForm.roleId,
-            object: {
-              account: this.loginForm.account,
-              password: this.loginForm.password,
-              realName: "刘建成",
-              sex: 1,
-              phone: "1234567890",
-            },
-          };
-          sessionStorage.setItem("info", JSON.stringify(jsonobj));
-          this.$router.push("/index");
+          // let jsonobj = {
+          //   roleId: this.loginForm.roleId,
+          //   object: {
+          //     account: this.loginForm.account,
+          //     password: this.loginForm.password,
+          //     realName: "刘建成",
+          //     sex: 1,
+          //     phone: "1234567890",
+          //   },
+          // };
+          // sessionStorage.setItem("info", JSON.stringify(jsonobj));
+          // this.$router.push("/index");
 
         } else {
           console.log("error submit!!");
@@ -141,6 +141,7 @@ export default {
       this.loginForm = {
         account: "",
         password: "",
+        roleId: 0,
       };
       // let result = await this.$API.loginAPI.test()
       // console.log(result)

@@ -6,7 +6,7 @@ module.exports = {
         proxy: {
             '/api': {
                 // target: 'https://api.apiopen.top', //要跨域的地址，接口对接使用
-                target: 'https://1964-110-88-108-247.ap.ngrok.io', //要跨域的地址，接口对接使用
+                target: 'https://f4be-27-151-103-128.jp.ngrok.io', //要跨域的地址，接口对接使用
                 changeOrigin: true, // 允许跨域
                 secure: false,
                 pathRewrite: {

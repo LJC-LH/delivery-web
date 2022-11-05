@@ -47,7 +47,7 @@ export default {
         },
         {
           menuClick: "station",
-          menuName: "网点管理",
+          menuName: "站点管理",
           menuIcon: "el-icon-menu",
           auth: [0],
         },

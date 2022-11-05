@@ -74,7 +74,7 @@
       </el-form-item>
       <el-row :gutter="10">
         <el-col :span="6">
-          <el-form-item label="快递网点：" size="middle" prop="stationSendId">
+          <el-form-item label="快递站点：" size="middle" prop="stationSendId">
             <el-select v-model="sendForm.stationSendId" placeholder="寄件网点">
               <el-option
                 v-for="(item, index) in stationList"
