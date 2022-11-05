@@ -1,384 +1,331 @@
 <template>
-    <div>
-        <div style="margin-bottom: 5px;">
-            <el-input v-model="realName" placeholder="请输入名字" suffix-icon="el-icon-search" style="width: 200px;"
-                      @keyup.enter.native="loadPost"></el-input>
-            <el-select v-model="sex" filterable placeholder="请选择性别" style="margin-left: 5px;">
-                <el-option
-                        v-for="item in sexs"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                </el-option>
-            </el-select>
-            <el-button type="primary" style="margin-left: 5px;" @click="loadPost">查询</el-button>
-            <el-button type="success" @click="resetParam">重置</el-button>
+  <div>
+    <div style="margin-bottom: 5px">
+      <el-input
+        v-model="account"
+        placeholder="请输入账号"
+        suffix-icon="el-icon-search"
+        style="width: 200px"
+        @keyup.enter.native="getAllList"
+      ></el-input>
+      <el-input
+        v-model="realName"
+        placeholder="请输入姓名"
+        suffix-icon="el-icon-search"
+        style="width: 200px"
+        @keyup.enter.native="getAllList"
+      ></el-input>
+      <el-button type="primary" style="margin-left: 5px" @click="getAllList"
+        >查询</el-button
+      >
+      <el-button type="success" @click="resetParam">重置</el-button>
 
-            <el-button type="primary" style="margin-left: 5px;" @click="add">新增</el-button>
-        </div>
-
-
-        <el-table :data="userList"
-                  :header-cell-style="{ background: '#f2f5fc', color: '#555555' }"
-                  border
-        >
-            <el-table-column prop="UserId" label="ID" width="60">
-            </el-table-column>
-            <el-table-column prop="account" label="账号" width="180">
-            </el-table-column>
-            <el-table-column prop="realName" label="姓名" width="180">
-            </el-table-column>
-            <el-table-column prop="age" label="年龄" width="80">
-            </el-table-column>
-            <el-table-column prop="sex" label="性别" width="80">
-                <template slot-scope="scope">
-                    <el-tag
-                            :type="scope.row.sex === 1 ? 'primary' : 'success'"
-                            disable-transitions>{{scope.row.sex === 1 ? '男' : '女'}}</el-tag>
-                </template>
-            </el-table-column>
-            <!-- <el-table-column prop="roleId" label="角色" width="120">
-                <template slot-scope="scope">
-                    <el-tag
-                            :type="scope.row.roleId === 0 ? 'danger' : (scope.row.roleId === 1 ? 'primary' : 'success')"
-                            disable-transitions>{{scope.row.roleId === 0 ? '超级管理员' :
-                        (scope.row.roleId === 1 ? '管理员' : '用户')}}</el-tag>
-                </template>
-            </el-table-column> -->
-            <el-table-column prop="phone" label="电话" width="180">
-            </el-table-column>
-            <el-table-column prop="operate" label="操作">
-                <template slot-scope="scope">
-                    <el-button size="small" type="success" @click="mod(scope.row)">编辑</el-button>
-                    <el-popconfirm
-                            title="确定删除吗？"
-                            @confirm="del(scope.row.UserId)"
-                            style="margin-left: 5px;"
-                    >
-                        <el-button slot="reference" size="small" type="danger" >删除</el-button>
-                    </el-popconfirm>
-                </template>
-            </el-table-column>
-        </el-table>
-        <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="page"
-                :page-sizes="[5, 10, 20,30]"
-                :page-size="recPerPage"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="total">
-        </el-pagination>
-
-        <el-dialog
-                title="提示"
-                :visible.sync="centerDialogVisible"
-                width="30%"
-                center>
-
-            <el-form ref="form" :rules="rules" :model="form" label-width="80px">
-                <el-form-item label="账号" prop="account">
-                    <el-col :span="20">
-                        <el-input v-model="form.account"></el-input>
-                    </el-col>
-                </el-form-item>
-                <el-form-item label="名字" prop="realName">
-                    <el-col :span="20">
-                        <el-input v-model="form.realName"></el-input>
-                    </el-col>
-                </el-form-item>
-                <el-form-item label="密码" prop="password">
-                    <el-col :span="20">
-                        <el-input v-model="form.password"></el-input>
-                    </el-col>
-                </el-form-item>
-                <el-form-item label="年龄" prop="age">
-                    <el-col :span="20">
-                        <el-input v-model="form.age"></el-input>
-                    </el-col>
-                </el-form-item>
-                <el-form-item label="性别">
-                    <el-radio-group v-model="form.sex">
-                        <el-radio label="1">男</el-radio>
-                        <el-radio label="0">女</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="电话" prop="phone">
-                    <el-col :span="20">
-                        <el-input v-model="form.phone"></el-input>
-                    </el-col>
-                </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-    <el-button @click="centerDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="save">确 定</el-button>
-  </span>
-        </el-dialog>
+      <el-button type="primary" style="margin-left: 30px" @click="add"
+        >新增</el-button
+      >
     </div>
+
+    <el-table
+      :data="userList"
+      :header-cell-style="{ background: '#f2f5fc', color: '#555555' }"
+      border
+    >
+      <el-table-column prop="userId" label="ID" align="center" width="60"> </el-table-column>
+      <el-table-column prop="account" label="账号" align="center" width="150">
+      </el-table-column>
+      <el-table-column prop="realName" label="姓名" align="center" width="150">
+      </el-table-column>
+      <el-table-column prop="sex" label="性别" align="center" width="150">
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.sex == 1 ? 'primary' : 'success'"
+            disable-transitions
+            >{{ scope.row.sex == 1 ? "男" : "女" }}</el-tag
+          >
+        </template>
+      </el-table-column>
+      <el-table-column prop="phone" label="电话" align="center" width="180"> </el-table-column>
+      <el-table-column prop="operate" label="操作">
+        <template slot-scope="scope">
+          <el-button size="small" type="success" @click="mod(scope.row)"
+            >修改</el-button
+          >
+          <el-popconfirm
+            title="确定删除吗？"
+            @confirm="doDel(scope.row.userId)"
+            style="margin-left: 5px"
+          >
+            <el-button slot="reference" size="small" type="danger"
+              >删除</el-button
+            >
+          </el-popconfirm>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="page"
+      :page-sizes="[2,3,5,10]"
+      :page-size="recPerPage"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+    >
+    </el-pagination>
+
+    <el-dialog
+      title="提示"
+      :visible.sync="centerDialogVisible"
+      width="30%"
+      center
+    >
+      <el-form ref="form" :rules="rules" :model="form" label-width="80px">
+        <el-form-item label="账号" prop="account">
+          <el-col :span="20">
+            <el-input v-model="form.account"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="名字" prop="realName">
+          <el-col :span="20">
+            <el-input v-model="form.realName"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-col :span="20">
+            <el-input v-model="form.password"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-radio-group v-model.number="form.sex">
+            <el-radio :label="1">男</el-radio>
+            <el-radio :label="0">女</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="电话" prop="phone">
+          <el-col :span="20">
+            <el-input v-model="form.phone"></el-input>
+          </el-col>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="centerDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="save">确 定</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
-    export default {
-        name: "UserManage",
-        data() {
-            let checkAge = (rule, value, callback) => {
-                if(value>150){
-                    callback(new Error('年龄输入过大'));
-                }else{
-                    callback();
-                }
-            };
-            let checkDuplicate =(rule,value,callback)=>{
-                if(this.form.UserId){
-                    return callback();
-                }
-                this.$axios.get(this.$httpUrl+"/user/findByNo?account="+this.form.account).then(res=>res.data).then(res=>{
-                    if(res.code!=200){
-
-                        callback()
-                    }else{
-                        callback(new Error('账号已经存在'));
-                    }
-                })
-            };
-
-            return {
-                userList: [
-                    {
-                        UserId:1,
-                        account:'user1',
-                        realName:'刘德华',
-                        age:20,
-                        sex:1,
-                        phone:'17767639938'
-                    },
-                    {
-                        UserId:1,
-                        account:'user2',
-                        realName:'郭富城',
-                        age:20,
-                        sex:0,
-                        phone:'17767639938'
-                    },
-                    {
-                        UserId:1,
-                        account:'user3',
-                        realName:'黎明',
-                        age:20,
-                        sex:1,
-                        phone:'17767639938'
-                    },
-                    {
-                        UserId:1,
-                        account:'user4',
-                        realName:'张学友',
-                        age:22,
-                        sex:0,
-                        phone:'17767639938'
-                    }
-                ],
-                recPerPage:5,
-                page:1,
-                total:0,
-                sex:'',
-                sexs:[
-                    {
-                        value: '1',
-                        label: '男'
-                    }, {
-                        value: '0',
-                        label: '女'
-                    }
-                ],
-                centerDialogVisible:false,
-                form:{
-                    UserId:'',
-                    account:'',
-                    realName:'',
-                    password:'',
-                    age:'',
-                    phone:'',
-                    sex:'0'
-                },
-                rules: {
-                    account: [
-                        {required: true, message: '请输入账号', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur'},
-                        {validator:checkDuplicate,trigger: 'blur'}
-                    ],
-                    realName: [
-                        {required: true, message: '请输入名字', trigger: 'blur'}
-                    ],
-                    password: [
-                        {required: true, message: '请输入密码', trigger: 'blur'},
-                        {min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur'}
-                    ],
-                    age: [
-                        {required: true, message: '请输入年龄', trigger: 'blur'},
-                        {min: 1, max: 3, message: '长度在 1 到 3 个位', trigger: 'blur'},
-                        {pattern: /^([1-9][0-9]*){1,3}$/,message: '年龄必须为正整数字',trigger: "blur"},
-                        {validator:checkAge,trigger: 'blur'}
-                    ],
-                    phone: [
-                        {required: true,message: "手机号不能为空",trigger: "blur"},
-                        {pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur"}
-                    ]
-                }
-            }
+export default {
+  name: "UserManage",
+  data() {
+    return {
+        // userList: [
+        //   {
+        //     userId: 1,
+        //     account: "user1",
+        //     realName: "刘德华",
+        //     sex: 1,
+        //     phone: "17767639938",
+        //   },
+        //   {
+        //     userId: 2,
+        //     account: "user2",
+        //     realName: "郭富城",
+        //     sex: 0,
+        //     phone: "17767639938",
+        //   },
+        //   {
+        //     userId: 3,
+        //     account: "user3",
+        //     realName: "黎明",
+        //     sex: 1,
+        //     phone: "17767639938",
+        //   },
+        //   {
+        //     userId: 4,
+        //     account: "user4",
+        //     realName: "张学友",
+        //     sex: 0,
+        //     phone: "17767639938",
+        //   },
+        // ],
+      userList: [],
+      account: "",
+      realName: "",
+      recPerPage: 3,
+      page: 1,
+      total: 0,
+      sex: "",
+      sexs: [
+        {
+          value: "1",
+          label: "男",
         },
-        methods:{
-            resetForm() {
-                this.$refs.form.resetFields();
-            },
-            del(UserId){
-                console.log(UserId)
-
-                this.$axios.get(this.$httpUrl+'/user/del?UserId='+UserId).then(res=>res.data).then(res=>{
-                    console.log(res)
-                    if(res.code==200){
-
-                        this.$message({
-                            message: '操作成功！',
-                            type: 'success'
-                        });
-                        this.loadPost()
-                    }else{
-                        this.$message({
-                            message: '操作失败！',
-                            type: 'error'
-                        });
-                    }
-
-                })
-            },
-            mod(row){
-                console.log(row)
-
-                this.centerDialogVisible = true
-                this.$nextTick(()=>{
-                    //赋值到表单
-                    this.form.UserId = row.UserId
-                    this.form.account = row.account
-                    this.form.realName = row.realName
-                    this.form.password = ''
-                    this.form.age = row.age +''
-                    this.form.sex = row.sex +''
-                    this.form.phone = row.phone
-                    this.form.roleId = row.roleId
-                })
-            },
-            add(){
-                this.centerDialogVisible = true
-                this.$nextTick(()=>{
-                    this.resetForm()
-                })
-
-            },
-            doSave(){
-                this.$axios.post(this.$httpUrl+'/user/save',this.form).then(res=>res.data).then(res=>{
-                    console.log(res)
-                    if(res.code==200){
-
-                        this.$message({
-                            message: '操作成功！',
-                            type: 'success'
-                        });
-                        this.centerDialogVisible = false
-                        this.loadPost()
-                        this. resetForm()
-                    }else{
-                        this.$message({
-                            message: '操作失败！',
-                            type: 'error'
-                        });
-                    }
-
-                })
-            },
-            doMod(){
-                this.$axios.post(this.$httpUrl+'/user/update',this.form).then(res=>res.data).then(res=>{
-                    console.log(res)
-                    if(res.code==200){
-
-                        this.$message({
-                            message: '操作成功！',
-                            type: 'success'
-                        });
-                        this.centerDialogVisible = false
-                        this.loadPost()
-                        this. resetForm()
-                    }else{
-                        this.$message({
-                            message: '操作失败！',
-                            type: 'error'
-                        });
-                    }
-
-                })
-            },
-            save(){
-                this.$refs.form.validate((valid) => {
-                    if (valid) {
-                        if(this.form.UserId){
-                            this.doMod();
-                        }else{
-                            this.doSave();
-                        }
-                    } else {
-                        console.log('error submit!!');
-                        return false;
-                    }
-                });
-
-            },
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
-                this.page=1
-                this.recPerPage=val
-                this.loadPost()
-            },
-            handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
-                this.page=val
-                this.loadPost()
-            },
-            loadGet(){
-                this.$axios.get(this.$httpUrl+'/user/list').then(res=>res.data).then(res=>{
-                    console.log(res)
-                })
-            },
-            resetParam(){
-                this.realName=''
-                this.sex=''
-            },
-            loadPost(){
-                this.$axios.post(this.$httpUrl+'/user/listPageC1',{
-                    recPerPage:this.recPerPage,
-                    page:this.page,
-                    param:{
-                        realName:this.realName,
-                        sex:this.sex,
-                        roleId:'2'
-                    }
-                }).then(res=>res.data).then(res=>{
-                    console.log(res)
-                    if(res.code==200){
-                        this.tableData=res.data
-                        this.total=res.total
-                    }else{
-                        alert('获取数据失败')
-                    }
-
-                })
-            }
+        {
+          value: "0",
+          label: "女",
         },
-        beforeMount() {
-            //this.loadGet();
-            //this.loadPost()
+      ],
+      centerDialogVisible: false,
+      form: {
+        account: "",
+        realName: "",
+        password: "",
+        phone: "",
+        sex: 1,
+      },
+      rules: {
+        account: [
+          { required: true, message: "请输入账号", trigger: "blur" },
+          { min: 3, max: 8, message: "长度在 3 到 8 个字符", trigger: "blur" },
+        ],
+        realName: [{ required: true, message: "请输入名字", trigger: "blur" }],
+        password: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          { min: 3, max: 8, message: "长度在 3 到 8 个字符", trigger: "blur" },
+        ],
+        phone: [
+          { required: true, message: "手机号不能为空", trigger: "blur" },
+          {
+            pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+            message: "请输入正确的手机号码",
+            trigger: "blur",
+          },
+        ],
+      },
+    };
+  },
+  methods: {
+    resetForm() {
+      this.$refs.form.resetFields();
+    },
+    async doDel(userId) {
+      console.log(userId);
+      let result = await this.$API.adminAPI.deleteuser(userId);
+      if (result.data.code == "200") {
+        this.getAllList();
+      } else {
+        this.$message({
+          type: "error",
+          message: result.data.message,
+        });
+      }
+    },
+    mod(row) {
+      console.log(row);
+      this.centerDialogVisible = true;
+      this.$nextTick(() => {
+        //赋值到表单
+        this.form.userId = row.userId;
+        this.form.account = row.account;
+        this.form.realName = row.realName;
+        this.form.password = row.password;
+        this.form.stationId = row.stationId;
+        this.form.sex = row.sex;
+        this.form.phone = row.phone;
+      });
+    },
+    add() {
+      this.centerDialogVisible = true;
+      this.$nextTick(() => {
+        this.resetForm();
+      });
+    },
+    async doSave() {
+      let result = await this.$API.adminAPI.adduser(this.form);
+      if (result.data.code == "200") {
+        this.$message({
+          type: "success",
+          message: result.data.message,
+        });
+        this.centerDialogVisible = false;
+        this.getAllList();
+        this.resetForm();
+      } else {
+        this.$message({
+          type: "error",
+          message: result.data.message,
+        });
+      }
+    },
+    async doMod() {
+      let result = await this.$API.adminAPI.updateuser(this.form);
+      if (result.data.code == "200") {
+        this.$message({
+          type: "success",
+          message: result.data.message,
+        });
+        this.centerDialogVisible = false;
+        this.getAllList();
+        this.resetForm();
+      } else {
+        this.$message({
+          type: "error",
+          message: result.data.message,
+        });
+      }
+    },
+    save() {
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          if (this.form.userId) {
+            this.doMod();
+          } else {
+            this.doSave();
+          }
+        } else {
+          this.$message({
+            type: "warning",
+            message: "请检查数据是否填写规范",
+          });
+          return false;
         }
-    }
+      });
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.page = 1;
+      this.recPerPage = val;
+      this.getAllList();
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.page = val;
+      this.getAllList();
+    },
+
+    resetParam() {
+      this.account = "";
+      this.realName = "";
+      this.getAllList();
+    },
+    async getAllList() {
+      let result = await this.$API.adminAPI.users({
+        account: this.account,
+        realName: this.realName,
+        recPerPage: this.recPerPage,
+        page: this.page,
+      });
+      if (result.data.code == "200") {
+        console.log(result)
+        this.userList = result.data.data;
+        // this.page = result.data.pager.page;
+        // this.recPerPage = result.data.pager.recPerPage;
+        this.total = result.data.pager.recTotal;
+      } else {
+        this.$message({
+          type: "error",
+          message: result.data.message,
+        });
+      }
+    },
+  },
+  beforeMount() {
+    this.getAllList();
+  },
+};
 </script>
 
 <style scoped>
-
 </style>
