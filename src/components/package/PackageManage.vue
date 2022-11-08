@@ -32,13 +32,16 @@
             <el-form-item label="订单号">
               <span>{{ props.row.packageId }}</span>
             </el-form-item>
+            <el-form-item label="价格">
+              <span>{{ props.row.price }}</span>
+            </el-form-item>
             <el-form-item label="寄件人">
               <span>{{ props.row.nameSend }}</span>
             </el-form-item>
             <el-form-item label="寄件地址">
               <span
                 >{{ props.row.provinceSend }}{{ props.row.citySend
-                }}{{ props.row.countySend }}{{ props.row.detialSend }}</span
+                }}{{ props.row.countySend }}{{ props.row.detailSend }}</span
               >
             </el-form-item>
             <el-form-item label="收件人">
@@ -48,24 +51,47 @@
               <span
                 >{{ props.row.provinceReceive }}{{ props.row.cityReceive
                 }}{{ props.row.countyReceive
-                }}{{ props.row.detialReceive }}</span
+                }}{{ props.row.detailReceive }}</span
               >
             </el-form-item>
             <el-form-item label="下单时间">
               <span>{{ props.row.timeSend }}</span>
             </el-form-item>
+            <el-form-item label="快递类型">
+              <span>{{ props.row.type }}</span>
+            </el-form-item>
+            <el-form-item label="重量">
+              <span>{{ props.row.weight }}</span>
+            </el-form-item>
+            <el-form-item label="备注">
+              <span>{{ props.row.remark }}</span>
+            </el-form-item>
             <el-form-item label="状态">
-              <span>{{
-                props.row.state == -1
-                  ? "已取消"
-                  : props.row.state == 0
-                  ? "已下单"
-                  : props.row.state == 1
-                  ? "运输中"
-                  : props.row.state == 2
-                  ? "派送中"
-                  : "已送达"
-              }}</span>
+              <el-tag
+                :type="
+                  props.row.state == -1
+                    ? 'danger'
+                    : props.row.state == 0
+                    ? 'info'
+                    : props.row.state == 1
+                    ? 'primary'
+                    : props.row.state == 2
+                    ? 'warning'
+                    : 'success'
+                "
+                disable-transitions
+                >{{
+                  props.row.state == -1
+                    ? "已取消"
+                    : props.row.state == 0
+                    ? "已下单"
+                    : props.row.state == 1
+                    ? "运输中"
+                    : props.row.state == 2
+                    ? "派送中"
+                    : "已送达"
+                }}
+              </el-tag>
             </el-form-item>
           </el-form>
         </template>
@@ -153,8 +179,11 @@
       </el-table-column>
       <el-table-column prop="operate" label="操作">
         <template slot-scope="scope">
+          <el-button size="small" type="primary" @click="watchMore(scope.row)"
+            >详情</el-button
+          >
           <el-button
-            v-if="info.object.roleId == 3"
+            v-if="info.roleId == 3"
             :disabled="!scope.row.state == 0"
             size="small"
             type="danger"
@@ -162,7 +191,7 @@
             >取消订单</el-button
           >
           <el-button
-            v-if="info.object.roleId != 3"
+            v-if="info.roleId != 3"
             size="small"
             type="warning"
             @click="change(scope.row)"
@@ -252,6 +281,55 @@
         <el-button type="primary" @click="doChange">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog title="订单详情" :visible.sync="centerDialogVisible2">
+      <el-steps
+        :active="form2.state"
+        finish-status="success"
+        process-status="finish"
+      >
+        <el-step title="已下单"></el-step>
+        <el-step title="运输中"></el-step>
+        <el-step title="派送中"></el-step>
+        <el-step title="已送达"></el-step>
+      </el-steps>
+      <br /><br />
+      <el-descriptions direction="vertical" :column="4" border size="big">
+        <el-descriptions-item label="订单号">{{
+          form2.packageId
+        }}</el-descriptions-item>
+        <el-descriptions-item label="价格">{{
+          form2.price
+        }}</el-descriptions-item>
+        <el-descriptions-item label="重量">{{
+          form2.weight
+        }}</el-descriptions-item>
+        <el-descriptions-item label="快递类型">{{
+          form2.type
+        }}</el-descriptions-item>
+        <el-descriptions-item label="寄件人">{{
+          form2.nameSend
+        }}</el-descriptions-item>
+        <el-descriptions-item label="寄件地址"
+          >{{ form2.provinceSend }}{{ form2.citySend }}{{ form2.countySend
+          }}{{ form2.detailSend }}</el-descriptions-item
+        >
+        <el-descriptions-item label="收件人">{{
+          form2.nameReceive
+        }}</el-descriptions-item>
+        <el-descriptions-item label="收件地址"
+          >{{ form2.provinceReceive }}{{ form2.cityReceive
+          }}{{ form2.countyReceive
+          }}{{ form2.detailReceive }}</el-descriptions-item
+        >
+        <el-descriptions-item label="下单时间">{{
+          form2.timeSend
+        }}</el-descriptions-item>
+        <el-descriptions-item label="备注">{{
+          form2.remark
+        }}</el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
   </div>
 </template>
 
@@ -260,114 +338,117 @@ export default {
   name: "PackageManage",
   data() {
     return {
+      centerDialogVisible2: false,
       flag: false,
       state: "",
       info: "",
-      stationList: [
-        {
-          stationId: 1,
-          account: "",
-          password: "",
-          realName: "福州大学服务站",
-          phone: "",
-          detail: "",
-          province: "",
-          city: "",
-          county: "",
-        },
-        {
-          stationId: 2,
-          account: "",
-          password: "",
-          realName: "厦门大学服务站",
-          phone: "",
-          detail: "",
-          province: "",
-          city: "",
-          county: "",
-        },
-      ],
-      postmanList: [
-        {
-          postmanId: 1,
-          account: "",
-          password: "",
-          realName: "张三",
-        },
-        {
-          postmanId: 2,
-          account: "",
-          password: "",
-          realName: "李四",
-        },
-      ],
-      packageList: [
-        {
-          packageId: 1,
-          nameSend: "user1",
-          provinceSend: "上海市",
-          citySend: "上海市",
-          countySend: "松江区",
-          nameReceive: "user2",
-          provinceReceive: "福建省",
-          cityReceive: "福州市",
-          countyReceive: "闽侯县",
-          timeSend: "2022/11/7",
-          state: -1,
-        },
-        {
-          packageId: 2,
-          nameSend: "user1",
-          provinceSend: "上海市",
-          citySend: "上海市",
-          countySend: "松江区",
-          nameReceive: "user2",
-          provinceReceive: "福建省",
-          cityReceive: "福州市",
-          countyReceive: "闽侯县",
-          timeSend: "2022/11/7",
-          state: 0,
-        },
-        {
-          packageId: 3,
-          nameSend: "user1",
-          provinceSend: "上海市",
-          citySend: "上海市",
-          countySend: "松江区",
-          nameReceive: "user2",
-          provinceReceive: "福建省",
-          cityReceive: "福州市",
-          countyReceive: "闽侯县",
-          timeSend: "2022/11/7",
-          state: 1,
-        },
-        {
-          packageId: 4,
-          nameSend: "user1",
-          provinceSend: "上海市",
-          citySend: "上海市",
-          countySend: "松江区",
-          nameReceive: "user2",
-          provinceReceive: "福建省",
-          cityReceive: "福州市",
-          countyReceive: "闽侯县",
-          timeSend: "2022/11/7",
-          state: 2,
-        },
-        {
-          packageId: 5,
-          nameSend: "user1",
-          citySend: "上海市",
-          nameReceive: "user2",
-          cityReceive: "福州市",
-          timeSend: "2022/11/7",
-          state: 3,
-        },
-      ],
-      //   packageList: [],
+      // stationList: [
+      //   {
+      //     stationId: 1,
+      //     account: "",
+      //     password: "",
+      //     realName: "福州大学服务站",
+      //     phone: "",
+      //     detail: "",
+      //     province: "",
+      //     city: "",
+      //     county: "",
+      //   },
+      //   {
+      //     stationId: 2,
+      //     account: "",
+      //     password: "",
+      //     realName: "厦门大学服务站",
+      //     phone: "",
+      //     detail: "",
+      //     province: "",
+      //     city: "",
+      //     county: "",
+      //   },
+      // ],
+      // postmanList: [
+      //   {
+      //     postmanId: 1,
+      //     account: "",
+      //     password: "",
+      //     realName: "张三",
+      //   },
+      //   {
+      //     postmanId: 2,
+      //     account: "",
+      //     password: "",
+      //     realName: "李四",
+      //   },
+      // ],
+      // packageList: [
+      //   {
+      //     packageId: 1,
+      //     nameSend: "user1",
+      //     provinceSend: "上海市",
+      //     citySend: "上海市",
+      //     countySend: "松江区",
+      //     nameReceive: "user2",
+      //     provinceReceive: "福建省",
+      //     cityReceive: "福州市",
+      //     countyReceive: "闽侯县",
+      //     timeSend: "2022/11/7",
+      //     state: -1,
+      //   },
+      //   {
+      //     packageId: 2,
+      //     nameSend: "user1",
+      //     provinceSend: "上海市",
+      //     citySend: "上海市",
+      //     countySend: "松江区",
+      //     nameReceive: "user2",
+      //     provinceReceive: "福建省",
+      //     cityReceive: "福州市",
+      //     countyReceive: "闽侯县",
+      //     timeSend: "2022/11/7",
+      //     state: 0,
+      //   },
+      //   {
+      //     packageId: 3,
+      //     nameSend: "user1",
+      //     provinceSend: "上海市",
+      //     citySend: "上海市",
+      //     countySend: "松江区",
+      //     nameReceive: "user2",
+      //     provinceReceive: "福建省",
+      //     cityReceive: "福州市",
+      //     countyReceive: "闽侯县",
+      //     timeSend: "2022/11/7",
+      //     state: 1,
+      //   },
+      //   {
+      //     packageId: 4,
+      //     nameSend: "user1",
+      //     provinceSend: "上海市",
+      //     citySend: "上海市",
+      //     countySend: "松江区",
+      //     nameReceive: "user2",
+      //     provinceReceive: "福建省",
+      //     cityReceive: "福州市",
+      //     countyReceive: "闽侯县",
+      //     timeSend: "2022/11/7",
+      //     state: 2,
+      //   },
+      //   {
+      //     packageId: 5,
+      //     nameSend: "user1",
+      //     citySend: "上海市",
+      //     nameReceive: "user2",
+      //     cityReceive: "福州市",
+      //     timeSend: "2022/11/7",
+      //     state: 3,
+      //   },
+      // ],
+      postmanList: [],
+      stationList: [],
+      packageList: [],
       account: "",
       realName: "",
-      recPerPage: 3,
+      recPerPage: 5,
       page: 1,
       total: 0,
       centerDialogVisible: false,
@@ -376,6 +457,19 @@ export default {
         state: "",
         stationReceiveId: "",
         postmanId: "",
+      },
+      form2: {
+        packageId: 1,
+        nameSend: "user1",
+        provinceSend: "上海市",
+        citySend: "上海市",
+        countySend: "松江区",
+        nameReceive: "user2",
+        provinceReceive: "福建省",
+        cityReceive: "福州市",
+        countyReceive: "闽侯县",
+        timeSend: "2022/11/7",
+        state: -1,
       },
       //   rules: {
       //     account: [
@@ -418,6 +512,15 @@ export default {
             message: result.data.message,
           });
         }
+      });
+    },
+    watchMore(row) {
+      console.log(row);
+      this.centerDialogVisible2 = true;
+      this.$nextTick(() => {
+        //赋值到表单
+        this.form2.packageId = row.packageId;
+        this.form2.state = row.state;
       });
     },
     change(row) {

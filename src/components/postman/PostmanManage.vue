@@ -174,7 +174,7 @@ export default {
       postmanList: [],
       account: "",
       realName: "",
-      recPerPage: 3,
+      recPerPage: 5,
       page: 1,
       total: 0,
       sex: "",

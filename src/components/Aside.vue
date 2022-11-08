@@ -55,7 +55,7 @@ export default {
           menuClick: "package",
           menuName: "快递管理",
           menuIcon: "el-icon-s-management",
-          auth: [0, 1, 2, 3],
+          auth: [1, 2, 3],
         },
         {
           menuClick: "send",

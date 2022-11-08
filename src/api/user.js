@@ -25,7 +25,7 @@ export const addpackage = (sendForm) => axios({
         detailSend: sendForm.detailSend,
         nameReceive: sendForm.nameReceive,
         phoneReceive: sendForm.phoneReceive,
-        provinceReceive: sendForm.phoneReceive,
+        provinceReceive: sendForm.provinceReceive,
         cityReceive: sendForm.cityReceive,
         countyReceive: sendForm.countyReceive,
         detailReceive: sendForm.detailReceive,

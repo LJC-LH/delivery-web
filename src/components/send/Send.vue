@@ -161,32 +161,33 @@ export default {
         price: 12,
         remark: "",
         state: 0,
-        userId: JSON.parse(sessionStorage.getItem("info")).object.userId
+        userId: JSON.parse(sessionStorage.getItem("info")).object.userId,
       },
-      stationList: [
-        {
-          stationId: 1,
-          account: "",
-          password: "",
-          realName: "福州大学服务站",
-          phone: "",
-          detail: "",
-          province: "",
-          city: "",
-          county: "",
-        },
-        {
-          stationId: 2,
-          account: "",
-          password: "",
-          realName: "厦门大学服务站",
-          phone: "",
-          detail: "",
-          province: "",
-          city: "",
-          county: "",
-        },
-      ],
+      // stationList: [
+      //   {
+      //     stationId: 1,
+      //     account: "",
+      //     password: "",
+      //     realName: "福州大学服务站",
+      //     phone: "",
+      //     detail: "",
+      //     province: "",
+      //     city: "",
+      //     county: "",
+      //   },
+      //   {
+      //     stationId: 2,
+      //     account: "",
+      //     password: "",
+      //     realName: "厦门大学服务站",
+      //     phone: "",
+      //     detail: "",
+      //     province: "",
+      //     city: "",
+      //     county: "",
+      //   },
+      // ],
+      stationList: [],
       typeList: ["日用品", "食品", "文件", "衣物", "数码产品", "其他"],
     };
   },
@@ -199,14 +200,14 @@ export default {
         center: true, //文字居中显示
       })
         .then(async () => {
-          let result = await this.$API.userAPI.addpackage(this.sendForm)
+          let result = await this.$API.userAPI.addpackage(this.sendForm);
           if (result.data.code == "200") {
-            console.log(result.data.data)
+            console.log(result.data.data);
             this.$message({
               type: "success",
               message: "下单成功，请耐心等待您的包裹送达",
             });
-            this.$router.push("/index/express");
+            this.$router.push("/index/package");
           }
         })
         .catch(() => {
@@ -234,41 +235,30 @@ export default {
         page: 1,
         recPerPage: 100,
       });
-      if(result.data.code == "200"){
-        this.stationList = result.data.data
-      }else{
+      if (result.data.code == "200") {
+        this.stationList = result.data.data;
+      } else {
         this.$message({
           type: "error",
-          message: result.data.message
-        })
+          message: result.data.message,
+        });
       }
     },
     onChangeProvinceReceive(province) {
       this.sendForm.provinceReceive = province.value;
       this.sendForm.cityReceive = "";
       this.sendForm.countyReceive = "";
+      this.sendForm.stationSendId = "";
     },
     onChangeCityReceive(city) {
       this.sendForm.cityReceive = city.value;
       this.sendForm.countyReceive = "";
+      this.sendForm.stationSendId = "";
     },
     async onChangeAreaReceive(county) {
       this.sendForm.countyReceive = county.value;
-      let result = await this.$API.stationAPI.stationsincertainarea({
-        province: this.sendForm.provinceReceive,
-        city: this.sendForm.cityReceive,
-        county: this.sendForm.countyReceive,
-        page: 1,
-        recPerPage: 100,
-      });
-      if(result.data.code == "200"){
-        this.stationList = result.data.data
-      }else{
-        this.$message({
-          type: "error",
-          message: result.data.message
-        })
-      }
+      this.sendForm.stationSendId = "";
+      this.getStationList()
     },
     computePrice() {
       this.sendForm.price =
@@ -276,7 +266,7 @@ export default {
     },
     reset(formName) {
       // this.$refs[formName].resetFields();
-      console.log(formName)
+      console.log(formName);
       this.sendForm = {
         nameSend: "",
         phoneSend: "",
@@ -297,8 +287,25 @@ export default {
         price: 12,
         remark: "",
         state: 0,
-        userId: JSON.parse(sessionStorage.getItem("info")).object.userId
+        userId: JSON.parse(sessionStorage.getItem("info")).object.userId,
       };
+    },
+    async getStationList() {
+      let result = await this.$API.stationAPI.stationsincertainarea({
+        province: this.sendForm.provinceReceive,
+        city: this.sendForm.cityReceive,
+        county: this.sendForm.countyReceive,
+        page: 1,
+        recPerPage: 100,
+      });
+      if (result.data.code == "200") {
+        this.stationList = result.data.data;
+      } else {
+        this.$message({
+          type: "error",
+          message: result.data.message,
+        });
+      }
     },
   },
 };
