@@ -35,9 +35,27 @@ export const addpackage = (sendForm) => axios({
         weight: sendForm.weight,
         price: sendForm.price,
         remark: sendForm.remark,
-        state: sendForm.state
+        state: sendForm.state,
+        userId: sendForm.userId
     }
 })
 
+export const packages = (packagesForm) => axios({
+    url: `/api/user/packages`,
+    method: 'post',
+    data: {
+        userId:packagesForm.userId,
+        page:packagesForm.page,
+        recPerPage:packagesForm.recPerPage
+    }
+});
+
+export const deletepackage = (packageId) => axios({
+    url: `/api/user/deletepackage`,
+    method: 'post',
+    data: {
+        packageId
+    }
+});
 
 

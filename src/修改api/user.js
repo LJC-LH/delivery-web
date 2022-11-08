@@ -39,15 +39,15 @@ export const addpackage = (sendForm) => axios({
     }
 });
 
-export const packages = (packagesForm) => axios({
-    url: `/api/user/packages`,
-    method: 'post',
-    data: {
-        userId:packagesForm.userId,
-        page:packagesForm.page,
-        recPerPage:packagesForm.recPerPage
-    }
-});
+// export const packages = (packagesForm) => axios({
+//     url: `/api/user/packages`,
+//     method: 'post',
+//     data: {
+//         userId:packagesForm.userId,
+//         page:packagesForm.page,
+//         recPerPage:packagesForm.recPerPage
+//     }
+// });
 
 export const package1 = (packageForm) => axios({
     url: `/api/user/package`,

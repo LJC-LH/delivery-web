@@ -19,7 +19,7 @@ export const updatepostman = (updatepostmanForm) => axios({
         password:updatepostmanForm.password,
         realName:updatepostmanForm.realName,
         phone:updatepostmanForm.phone,
-        sex:updatepostmanForm.sex,，
+        sex:updatepostmanForm.sex,
         roleId:updatepostmanForm.roleId
     }
 });

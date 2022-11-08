@@ -36,8 +36,8 @@
       </el-form>
       <div class="login">
         <span @click="toLogin">
-        <i class="el-icon-refresh-right"></i>&nbsp;返回登录
-      </span>
+          <i class="el-icon-refresh-right"></i>&nbsp;返回登录
+        </span>
       </div>
     </div>
   </div>
@@ -53,7 +53,7 @@ export default {
         realName: "",
         phone: "",
         sex: 1,
-        roleId:2  //写死，注册只能是普通用户
+        roleId: 2, //写死，注册只能是普通用户
       },
       rules: {
         account: [
@@ -71,15 +71,14 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
-        //   let result = this.$API.userAPI.register(this.registerForm);
-        //   if (result.code == "200") {
-            if(this.registerForm.account == "admin"){
-            console.log(this.registerForm)
+          let result = this.$API.userAPI.register(this.registerForm);
+          if (result.data.code == "200") {
+            console.log(this.registerForm);
             this.$message({
               type: "success",
               message: "注册成功",
             });
-            this.$router.replace('/')
+            this.$router.replace("/");
           } else {
             this.$message({
               type: "danger",
@@ -87,10 +86,10 @@ export default {
             });
           }
         } else {
-           this.$message({
-              type: "warning",
-              message: "请按要求填写信息！",
-            });
+          this.$message({
+            type: "warning",
+            message: "请按要求填写信息！",
+          });
           return false;
         }
       });

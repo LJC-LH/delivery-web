@@ -75,7 +75,7 @@
       <el-row :gutter="10">
         <el-col :span="6">
           <el-form-item label="快递站点：" size="middle" prop="stationSendId">
-            <el-select v-model="sendForm.stationSendId" placeholder="寄件网点">
+            <el-select v-model="sendForm.stationSendId" placeholder="寄件站点">
               <el-option
                 v-for="(item, index) in stationList"
                 :key="index"
@@ -161,6 +161,7 @@ export default {
         price: 12,
         remark: "",
         state: 0,
+        userId: JSON.parse(sessionStorage.getItem("info")).object.userId
       },
       stationList: [
         {
@@ -190,17 +191,17 @@ export default {
     };
   },
   methods: {
-    onSubmit(sendForm) {
-      console.log(sendForm)
+    onSubmit() {
+      console.log(this.sendForm);
       this.$confirm("信息全部填写完成了嘛^-^?", "提示", {
         confirmButtonText: "确定", //确认按钮的文字显示
         type: "warning",
         center: true, //文字居中显示
       })
         .then(async () => {
-          // let result = await this.$API.userAPI.addpackage(this.sendForm)
-          // if (result.data.code == "200") {
-          if (this.sendForm) {
+          let result = await this.$API.userAPI.addpackage(this.sendForm)
+          if (result.data.code == "200") {
+            console.log(result.data.data)
             this.$message({
               type: "success",
               message: "下单成功，请耐心等待您的包裹送达",
@@ -224,8 +225,23 @@ export default {
       this.sendForm.citySend = city.value;
       this.sendForm.countySend = "";
     },
-    onChangeAreaSend(county) {
+    async onChangeAreaSend(county) {
       this.sendForm.countySend = county.value;
+      let result = await this.$API.stationAPI.stationsincertainarea({
+        province: this.sendForm.provinceSend,
+        city: this.sendForm.citySend,
+        county: this.sendForm.countySend,
+        page: 1,
+        recPerPage: 100,
+      });
+      if(result.data.code == "200"){
+        this.stationList = result.data.data
+      }else{
+        this.$message({
+          type: "error",
+          message: result.data.message
+        })
+      }
     },
     onChangeProvinceReceive(province) {
       this.sendForm.provinceReceive = province.value;
@@ -236,36 +252,53 @@ export default {
       this.sendForm.cityReceive = city.value;
       this.sendForm.countyReceive = "";
     },
-    onChangeAreaReceive(county) {
+    async onChangeAreaReceive(county) {
       this.sendForm.countyReceive = county.value;
+      let result = await this.$API.stationAPI.stationsincertainarea({
+        province: this.sendForm.provinceReceive,
+        city: this.sendForm.cityReceive,
+        county: this.sendForm.countyReceive,
+        page: 1,
+        recPerPage: 100,
+      });
+      if(result.data.code == "200"){
+        this.stationList = result.data.data
+      }else{
+        this.$message({
+          type: "error",
+          message: result.data.message
+        })
+      }
     },
     computePrice() {
       this.sendForm.price =
         this.sendForm.weight <= 3 ? 12 : (this.sendForm.weight - 3) * 2 + 12;
     },
     reset(formName) {
-      this.$refs[formName].resetFields();
-      // this.sendForm = {
-      //   nameSend: "",
-      //   phoneSend: "",
-      //   provinceSend: "",
-      //   citySend: "",
-      //   countySend: "",
-      //   detailSend: "",
-      //   nameReceive: "",
-      //   phoneReceive: "",
-      //   provinceReceive: "",
-      //   cityReceive: "",
-      //   countyReceive: "",
-      //   detailReceive: "",
-      //   stationSendId: "",
-      //   stationReceiveId: "",
-      //   type: "",
-      //   weight: 1.0,
-      //   price: 12,
-      //   remark: "",
-      //   state: 0,
-      // };
+      // this.$refs[formName].resetFields();
+      console.log(formName)
+      this.sendForm = {
+        nameSend: "",
+        phoneSend: "",
+        provinceSend: "",
+        citySend: "",
+        countySend: "",
+        detailSend: "",
+        nameReceive: "",
+        phoneReceive: "",
+        provinceReceive: "",
+        cityReceive: "",
+        countyReceive: "",
+        detailReceive: "",
+        stationSendId: "",
+        stationReceiveId: "",
+        type: "",
+        weight: 1.0,
+        price: 12,
+        remark: "",
+        state: 0,
+        userId: JSON.parse(sessionStorage.getItem("info")).object.userId
+      };
     },
   },
 };

@@ -1,16 +1,16 @@
 import axios from 'axios'
 
-export const sincertainarea = (certainareaForm) => axios({
-    url: `/api/station/sincertainarea`,
-    method: 'post',
-    data: {
-        province: certainareaForm.province,
-		city:certainareaForm.city,
-		county:certainareaForm.county,
-		page:certainareaForm.page,
-        recPerPage: certainareaForm.recPerPage
-    }
-});
+// export const stationsincertainarea = (stationsincertainareaForm) => axios({
+//     url: `/api/stationsincertainarea`,
+//     method: 'post',
+//     data: {
+//         province: stationsincertainareaForm.province,
+// 		city:stationsincertainareaForm.city,
+// 		county:stationsincertainareaForm.county,
+// 		page:stationsincertainareaForm.page,
+//         recPerPage: stationsincertainareaForm.recPerPage
+//     }
+// });
 
 export const postmans = (postmansForm) => axios({
     url: `/api/station/postmans`,
@@ -69,43 +69,43 @@ export const deletepostman = (deletepostmanForm) => axios({
     }
 });
 
-export const packagestosend= (packagestosendForm) => axios({
-    url: `api/station/packagestosend`,
-    method: 'post',
-    data: {
-		stationId:packagestosendForm.stationId,
-		page:packagestosendForm.page,
-		recPerPage:packagestosendForm.recPerPage
-    }
-});
+// export const packagestosend= (packagestosendForm) => axios({
+//     url: `api/station/packagestosend`,
+//     method: 'post',
+//     data: {
+// 		stationId:packagestosendForm.stationId,
+// 		page:packagestosendForm.page,
+// 		recPerPage:packagestosendForm.recPerPage
+//     }
+// });
 
-export const sendpackage= (sendpackageForm) => axios({
-    url: `api/station/sendpackage`,
-    method: 'post',
-    data: {
-		pageId:sendpackageForm.pageId,
-		stationReceiveId:sendpackageForm.stationReceiveId
-    }
-});
+// export const sendpackage= (sendpackageForm) => axios({
+//     url: `api/station/sendpackage`,
+//     method: 'post',
+//     data: {
+// 		pageId:sendpackageForm.pageId,
+// 		stationReceiveId:sendpackageForm.stationReceiveId
+//     }
+// });
 
-export const packagestoreceive= (packagestoreceiveForm) => axios({
-    url: `api/station/packagestoreceive`,
-    method: 'post',
-    data: {
-		stationId:packagestoreceiveForm.stationId,
-		page:packagestoreceiveForm.page,
-		recPerPage:packagestoreceiveForm.recPerPage
-    }
-});
+// export const packagestoreceive= (packagestoreceiveForm) => axios({
+//     url: `api/station/packagestoreceive`,
+//     method: 'post',
+//     data: {
+// 		stationId:packagestoreceiveForm.stationId,
+// 		page:packagestoreceiveForm.page,
+// 		recPerPage:packagestoreceiveForm.recPerPage
+//     }
+// });
 
-export const choosepostman= (choosepostmanForm) => axios({
-    url: `api/station/choosepostman`,
-    method: 'post',
-    data: {
-		packageId:choosepostmanForm.pageId,
-		postmanId:choosepostmanForm.postmanId
-    }
-});
+// export const choosepostman= (choosepostmanForm) => axios({
+//     url: `api/station/choosepostman`,
+//     method: 'post',
+//     data: {
+// 		packageId:choosepostmanForm.pageId,
+// 		postmanId:choosepostmanForm.postmanId
+//     }
+// });
 
 export const updatestation= (updatestationForm) => axios({
     url: `api/station/updatestation`,

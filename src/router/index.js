@@ -48,13 +48,13 @@ const routes = [
                 component: () => import('../components/user/UserManage.vue')
             },
             {
-                path: 'express',
-                name: 'express',
+                path: 'package',
+                name: 'package',
                 meta: {
                     title: '快递管理',
                     isAnth: true
                 },
-                component: () => import('../components/express/ExpressManage.vue')
+                component: () => import('../components/package/PackageManage.vue')
             },
             {
                 path: 'station',

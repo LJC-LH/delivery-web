@@ -52,7 +52,7 @@ export default {
           auth: [0],
         },
         {
-          menuClick: "express",
+          menuClick: "package",
           menuName: "快递管理",
           menuIcon: "el-icon-s-management",
           auth: [0, 1, 2, 3],
