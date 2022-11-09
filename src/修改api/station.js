@@ -12,15 +12,15 @@ import axios from 'axios'
 //     }
 // });
 
-export const postmans = (postmansForm) => axios({
-    url: `/api/station/postmans`,
-    method: 'post',
-    data: {
-        stationId:postmansForm.stationId,
-		page:postmansForm.page,
-		recPerPage:postmansForm.recPerPage
-    }
-});
+// export const postmans = (postmansForm) => axios({
+//     url: `/api/station/postmans`,
+//     method: 'post',
+//     data: {
+//         stationId:postmansForm.stationId,
+// 		page:postmansForm.page,
+// 		recPerPage:postmansForm.recPerPage
+//     }
+// });
 
 export const postman = (postmanForm) => axios({
     url: `/api/station/postman`,
