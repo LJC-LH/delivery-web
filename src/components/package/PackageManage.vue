@@ -2,23 +2,32 @@
   <div>
     <div style="margin-bottom: 5px">
       <el-input
-        v-model="account"
-        placeholder="请输入账号"
+        v-model="nameReceive"
+        placeholder="请输入收件人"
         suffix-icon="el-icon-search"
         style="width: 200px"
         @keyup.enter.native="getAllList"
       ></el-input>
-      <el-input
-        v-model="realName"
-        placeholder="请输入姓名"
-        suffix-icon="el-icon-search"
-        style="width: 200px"
-        @keyup.enter.native="getAllList"
-      ></el-input>
+      <el-select v-model.number="state" placeholder="请选择状态" @change="getAllList" v-if="info.roleId == 3">
+        <el-option label="已取消" :value="-1"> </el-option>
+        <el-option label="已下单" :value="0"> </el-option>
+        <el-option label="运输中" :value="1"> </el-option>
+        <el-option label="派送中" :value="2"> </el-option>
+        <el-option label="已送达" :value="3"> </el-option>
+      </el-select>
       <el-button type="primary" style="margin-left: 5px" @click="getAllList"
         >查询</el-button
       >
       <el-button type="success" @click="resetParam">重置</el-button>
+      <el-switch
+        v-if="info.roleId == 1"
+        style="margin-left: 40%"
+        v-model="chose"
+        active-text="查看待派送"
+        inactive-text="查看已下单"
+        @change="getAllList"
+      >
+      </el-switch>
     </div>
 
     <el-table
@@ -33,7 +42,7 @@
               <span>{{ props.row.packageId }}</span>
             </el-form-item>
             <el-form-item label="价格">
-              <span>{{ props.row.price }}</span>
+              <span>{{ props.row.price }}元</span>
             </el-form-item>
             <el-form-item label="寄件人">
               <span>{{ props.row.nameSend }}</span>
@@ -61,7 +70,7 @@
               <span>{{ props.row.type }}</span>
             </el-form-item>
             <el-form-item label="重量">
-              <span>{{ props.row.weight }}</span>
+              <span>{{ props.row.weight }}kg</span>
             </el-form-item>
             <el-form-item label="备注">
               <span>{{ props.row.remark }}</span>
@@ -100,7 +109,7 @@
         prop="packageId"
         label="订单号"
         align="center"
-        width="60"
+        width="160"
       >
       </el-table-column>
       <el-table-column
@@ -114,7 +123,7 @@
         prop="citySend"
         label="寄出城市"
         align="center"
-        width="150"
+        width="80"
       >
         <template slot-scope="scope">
           <el-tag type="success" disable-transitions effect="plain">{{
@@ -133,7 +142,7 @@
         prop="cityReceive"
         label="寄往城市"
         align="center"
-        width="150"
+        width="80"
       >
         <template slot-scope="scope">
           <el-tag type="success" disable-transitions effect="plain">{{
@@ -218,7 +227,7 @@
       center
     >
       <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="收件站点:" v-if="state == 0">
+        <el-form-item label="收件站点:" v-if="oldState == 0">
           <el-col :span="20">
             <el-select v-model="form.stationReceiveId" placeholder="收件站点">
               <el-option
@@ -230,7 +239,7 @@
             </el-select>
           </el-col>
         </el-form-item>
-        <el-form-item label="派件员:" v-if="state == 1">
+        <el-form-item label="派件员:" v-if="oldState == 1">
           <el-col :span="20">
             <el-select v-model="form.postmanId" placeholder="选择快递员">
               <el-option
@@ -242,7 +251,7 @@
             </el-select>
           </el-col>
         </el-form-item>
-        <el-form-item label="快递状态:" v-if="state == 0">
+        <el-form-item label="快递状态:" v-show="oldState == 0">
           <el-col :span="20">
             <el-switch
               v-model="flag"
@@ -253,7 +262,7 @@
             </el-switch>
           </el-col>
         </el-form-item>
-        <el-form-item label="快递状态:" v-if="state == 1">
+        <el-form-item label="快递状态:" v-show="oldState == 1">
           <el-col :span="20">
             <el-switch
               v-model="flag"
@@ -264,7 +273,7 @@
             </el-switch>
           </el-col>
         </el-form-item>
-        <el-form-item label="快递状态:" v-if="state == 2">
+        <el-form-item label="快递状态:" v-show="oldState == 2">
           <el-col :span="20">
             <el-switch
               v-model="flag"
@@ -298,12 +307,12 @@
         <el-descriptions-item label="订单号">{{
           form2.packageId
         }}</el-descriptions-item>
-        <el-descriptions-item label="价格">{{
-          form2.price
-        }}</el-descriptions-item>
-        <el-descriptions-item label="重量">{{
-          form2.weight
-        }}</el-descriptions-item>
+        <el-descriptions-item label="价格"
+          >{{ form2.price }}元</el-descriptions-item
+        >
+        <el-descriptions-item label="重量"
+          >{{ form2.weight }}kg</el-descriptions-item
+        >
         <el-descriptions-item label="快递类型">{{
           form2.type
         }}</el-descriptions-item>
@@ -338,10 +347,11 @@ export default {
   name: "PackageManage",
   data() {
     return {
+      chose: false,
       centerDialogVisible2: false,
       flag: false,
-      state: "",
-      info: "",
+      oldState: "",
+      info: {},
       // stationList: [
       //   {
       //     stationId: 1,
@@ -446,8 +456,8 @@ export default {
       postmanList: [],
       stationList: [],
       packageList: [],
-      account: "",
-      realName: "",
+      nameReceive: "",
+      state: "",
       recPerPage: 5,
       page: 1,
       total: 0,
@@ -459,17 +469,23 @@ export default {
         postmanId: "",
       },
       form2: {
-        packageId: 1,
-        nameSend: "user1",
-        provinceSend: "上海市",
-        citySend: "上海市",
-        countySend: "松江区",
-        nameReceive: "user2",
-        provinceReceive: "福建省",
-        cityReceive: "福州市",
-        countyReceive: "闽侯县",
-        timeSend: "2022/11/7",
-        state: -1,
+        packageId: "",
+        nameSend: "",
+        provinceSend: "",
+        citySend: "",
+        countySend: "",
+        detailSend: "",
+        nameReceive: "",
+        provinceReceive: "",
+        cityReceive: "",
+        countyReceive: "",
+        detailReceive: "",
+        timeSend: "",
+        state: 0,
+        type: "",
+        weight: "",
+        price: "",
+        remark: "",
       },
       //   rules: {
       //     account: [
@@ -520,7 +536,22 @@ export default {
       this.$nextTick(() => {
         //赋值到表单
         this.form2.packageId = row.packageId;
+        this.form2.nameSend = row.nameSend;
+        this.form2.provinceSend = row.provinceSend;
+        this.form2.citySend = row.citySend;
+        this.form2.countySend = row.countySend;
+        this.form2.detailSend = row.detailSend;
+        this.form2.nameReceive = row.nameReceive;
+        this.form2.provinceReceive = row.provinceReceive;
+        this.form2.cityReceive = row.cityReceive;
+        this.form2.countyReceive = row.countyReceive;
+        this.form2.detailReceive = row.detailReceive;
+        this.form2.timeSend = row.timeSend;
         this.form2.state = row.state;
+        this.form2.type = row.type;
+        this.form2.weight = row.weight;
+        this.form2.price = row.price;
+        this.form2.remark = row.remark;
       });
     },
     change(row) {
@@ -532,29 +563,29 @@ export default {
       this.$nextTick(() => {
         //赋值到表单
         this.form.packageId = row.packageId;
-        this.state = row.state;
+        this.oldState = row.state;
       });
     },
     changeState() {
       if (this.flag) {
-        this.form.state = this.state + 1;
+        this.form.state = this.oldState + 1;
       } else {
-        this.form.state = this.state;
+        this.form.state = this.oldState;
       }
     },
     async doChange() {
       let result = "";
-      if (this.state == 0) {
+      if (this.oldState == 0) {
         result = await this.$API.stationAPI.sendpackage({
           packageId: this.form.packageId,
           stationReceiveId: this.form.stationReceiveId,
         });
-      } else if (this.state == 1) {
+      } else if (this.oldState == 1) {
         result = await this.$API.stationAPI.choosepostman({
           packageId: this.form.packageId,
           postmanId: this.form.postmanId,
         });
-      } else if (this.state == 2) {
+      } else if (this.oldState == 2) {
         result = await this.$API.postmanAPI.receivepackage(this.form.packageId);
       }
       if (result.data.code == "200") {
@@ -584,53 +615,72 @@ export default {
     },
 
     resetParam() {
-      this.account = "";
-      this.realName = "";
+      this.nameReceive = "";
+      this.state = "";
       this.getAllList();
     },
     async getAllList() {
-      let result = "";
-      let result1 = "";
+      // let result = {};
+      // let result1 = {};
       if (this.info.roleId == 3) {
-        result = await this.$API.userAPI.packages({
+        let result = await this.$API.userAPI.packages({
           userId: this.info.object.userId,
+          nameReceive: this.nameReceive,
+          state: String(this.state),
           recPerPage: this.recPerPage,
           page: this.page,
         });
-      } else if (this.info.roleId == 1) {
-        result = await this.$API.stationAPI.packagestosend({
-          stationId: this.info.object.stationId,
-          recPerPage: this.recPerPage,
-          page: this.page,
-        });
-        result1 = await this.$API.stationAPI.packagestoreceive({
-          stationId: this.info.object.stationId,
-          recPerPage: this.recPerPage,
-          page: this.page,
-        });
-      } else if (this.info.roleId == 2) {
-        result = await this.$API.postmanAPI.packagestoreceive({
-          postmanId: this.info.object.postmanId,
-          recPerPage: this.recPerPage,
-          page: this.page,
-        });
-      }
-      if (result.data.code == "200") {
-        console.log(result);
-        this.packageList = result.data.data;
-        this.total = result.data.pager.recTotal;
-        if (result1 != "") {
-          if (result1.data.code == "200") {
-            this.packageList += result1.data.data;
-            this.total += result.data.pager.recTotal;
-          }
+        if (result.data.code == "200") {
+          this.packageList = result.data.data;
+          this.total = result.data.pager.recTotal;
         }
-      } else {
-        this.$message({
-          type: "error",
-          message: result.data.message,
+      } else if (this.info.roleId == 1 && this.chose == false) {
+        let result = await this.$API.stationAPI.packagestosend({
+          stationId: this.info.object.stationId,
+          nameReceive: this.nameReceive,
+          state: String(this.state),
+          recPerPage: this.recPerPage,
+          page: this.page,
         });
+
+        if (result.data.code == "200") {
+          this.packageList = result.data.data;
+          this.total = result.data.pager.recTotal;
+        }
+      } else if (this.info.roleId == 1 && this.chose == true) {
+        let result = await this.$API.stationAPI.packagestoreceive({
+          stationId: this.info.object.stationId,
+          nameReceive: this.nameReceive,
+          state: String(this.state),
+          recPerPage: this.recPerPage,
+          page: this.page,
+        });
+        if (result.data.code == "200") {
+          this.packageList = result.data.data;
+          this.total = result.data.pager.recTotal;
+        }
+      } else if (this.info.roleId == 2) {
+        let result = await this.$API.postmanAPI.packagestoreceive({
+          postmanId: this.info.object.postmanId,
+          nameReceive: this.nameReceive,
+          state: String(this.state),
+          recPerPage: this.recPerPage,
+          page: this.page,
+        });
+        if (result.data.code == "200") {
+          this.packageList = result.data.data;
+          this.total = result.data.pager.recTotal;
+        }
       }
+      // if (result.data.code == "200") {
+      //   this.packageList = result.data.data;
+      //   this.total = result.data.pager.recTotal;
+      // }
+      // if (result1.data.code == "200") {
+      //   console.log(result1);
+      //   this.packageList.push.apply(this.packageList, result1.data.data);
+      //   this.total = this.total + result.data.pager.recTotal;
+      // }
     },
     async getStationList(row) {
       let result = await this.$API.stationAPI.stationsincertainarea({
@@ -650,7 +700,7 @@ export default {
       }
     },
     async getPostmanList(row) {
-      let result = await this.$API.postmanAPI.postmans({
+      let result = await this.$API.stationAPI.postmans({
         stationId: row.stationReceiveId,
         page: 1,
         recPerPage: 100,

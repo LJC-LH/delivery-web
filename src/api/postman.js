@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export const receivepackage= (packageId) => axios({
-    url: `/api/station/receivepackage`,
+    url: `/api/postman/receivepackage`,
     method: 'post',
     data: {
 		packageId
@@ -14,6 +14,8 @@ export const packagestoreceive = (packagestoreceiveForm) => axios({
     method: 'post',
     data: {
         postmanId:packagestoreceiveForm.postmanId,
+        nameReceive:packagestoreceiveForm.nameReceive,
+        state:packagestoreceiveForm.state,
         page:packagestoreceiveForm.postmanId,
         recPerPage:packagestoreceiveForm.recPerPage
     }

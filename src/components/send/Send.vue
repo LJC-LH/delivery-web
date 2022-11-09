@@ -221,10 +221,13 @@ export default {
       this.sendForm.provinceSend = province.value;
       this.sendForm.citySend = "";
       this.sendForm.countySend = "";
+      this.sendForm.stationSendId = "";
     },
     onChangeCitySend(city) {
       this.sendForm.citySend = city.value;
       this.sendForm.countySend = "";
+      this.sendForm.stationSendId = "";
+      this.getStationList();
     },
     async onChangeAreaSend(county) {
       this.sendForm.countySend = county.value;
@@ -248,17 +251,14 @@ export default {
       this.sendForm.provinceReceive = province.value;
       this.sendForm.cityReceive = "";
       this.sendForm.countyReceive = "";
-      this.sendForm.stationSendId = "";
     },
     onChangeCityReceive(city) {
       this.sendForm.cityReceive = city.value;
       this.sendForm.countyReceive = "";
-      this.sendForm.stationSendId = "";
     },
     async onChangeAreaReceive(county) {
       this.sendForm.countyReceive = county.value;
       this.sendForm.stationSendId = "";
-      this.getStationList()
     },
     computePrice() {
       this.sendForm.price =

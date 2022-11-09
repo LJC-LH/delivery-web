@@ -365,7 +365,7 @@ export default {
     this.getAllList()
     if (JSON.parse(sessionStorage.getItem("info")).roleId == 2) {
       let result = await this.$API.adminAPI.station(
-        sessionStorage.getItem("info").object.stationId
+        JSON.parse(sessionStorage.getItem("info")).object.stationId
       );
       if (result.data.code == "200") {
         this.stationInfo = result.data.data;
@@ -382,7 +382,6 @@ export default {
         page: 1,
         recPerPage: 100,
       });
-      console.log(11111,result)
       if (result.data.code == "200") {
         console.log(result);
         this.stationList = result.data.data;

@@ -45,6 +45,8 @@ export const packages = (packagesForm) => axios({
     method: 'post',
     data: {
         userId:packagesForm.userId,
+        nameReceive:packagesForm.nameReceive,
+        state:packagesForm.state,
         page:packagesForm.page,
         recPerPage:packagesForm.recPerPage
     }
