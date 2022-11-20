@@ -69,9 +69,10 @@ export default {
   },
   methods: {
     submitForm(formName) {
-      this.$refs[formName].validate(async (valid) => {
+      this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          let result = this.$API.userAPI.register(this.registerForm);
+          let result =await this.$API.userAPI.register(this.registerForm);
+          console.log(result);
           if (result.data.code == "200") {
             console.log(this.registerForm);
             this.$message({
